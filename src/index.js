@@ -27,8 +27,8 @@ async function onSearchForm(event) {
   const pictures = await galleryService.getPictures();
 
   if (!pictures.length) {
-    return Notiflix.Notify.failure(
-      'Sorry, there are no images matching your search query. Please try again.'
+    return Notiflix.Notify.info(
+      "We're sorry, but you've reached the end of search results."
     );
   }
 
@@ -71,6 +71,12 @@ async function onLoadMore() {
   loadMoreButton.hide();
 
   const pictures = await galleryService.getPictures();
+
+  if (!pictures.length) {
+    return Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+  }
 
   showGallery(pictures);
 
