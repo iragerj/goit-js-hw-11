@@ -4,10 +4,14 @@ import Notiflix from 'notiflix';
 export default class GalleryApiService {
   constructor() {
     this.searchQuery = '';
-    this.page = 1;
+    this.page = 0;
+    this.maxPage = null;
+    this.perPage = 40;
   }
 
   getPictures() {
+    this.page += 1;
+
     return axios
       .get('https://pixabay.com/api/', {
         params: {
@@ -17,11 +21,15 @@ export default class GalleryApiService {
           orientation: 'horizontal',
           safesearch: true,
           page: this.page,
-          per_page: 40,
+          per_page: this.perPage,
         },
       })
       .then(response => {
-        this.page += 1;
+        if (this.maxPage === null) {
+          this.maxPage = Math.ceil(response.data.totalHits / this.perPage);
+          console.log(this.maxPage);
+        }
+
         return response.data.hits;
       })
       .catch(function (error) {
@@ -34,7 +42,11 @@ export default class GalleryApiService {
   }
 
   resetPage() {
-    this.page = 1;
+    this.page = 0;
+  }
+
+  resetMaxPage() {
+    this.maxPage = null;
   }
 
   get query() {

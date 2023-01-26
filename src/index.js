@@ -22,18 +22,22 @@ async function onSearchForm(event) {
 
   galleryService.query = event.currentTarget.elements.searchQuery.value;
   galleryService.resetPage();
+  galleryService.resetMaxPage();
   clearGallery();
 
   const pictures = await galleryService.getPictures();
 
   if (!pictures.length) {
     return Notiflix.Notify.info(
-      "We're sorry, but you've reached the end of search results."
+      'Sorry, there are no images matching your search query. Please try again.'
     );
   }
 
   showGallery(pictures);
-  loadMoreButton.show();
+
+  if (galleryService.maxPage > 1) {
+    loadMoreButton.show();
+  }
 }
 
 function showGallery(pictures) {
@@ -69,16 +73,14 @@ function showGallery(pictures) {
 
 async function onLoadMore() {
   loadMoreButton.hide();
-
   const pictures = await galleryService.getPictures();
+  showGallery(pictures);
 
-  if (!pictures.length) {
+  if (galleryService.page >= galleryService.maxPage) {
     return Notiflix.Notify.failure(
-      'Sorry, there are no images matching your search query. Please try again.'
+      "We're sorry, but you've reached the end of search results."
     );
   }
-
-  showGallery(pictures);
 
   loadMoreButton.show();
 }
